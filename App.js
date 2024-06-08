@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView} from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
 import ExternalLink from './components/ExternalLink';
 import { WebView } from 'react-native-webview';
 
@@ -23,6 +23,17 @@ export default function App() {
       <WebView
         source={{ uri: 'https://exceltonight.com' }}
         style={styles.webView}
+        onReceivedSslError={(webView, sslErrorHandler, sslError) => {
+          if (sslError.primaryError === 'HOST_NAME_MISMATCH') {
+            sslErrorHandler.cancel();
+          } else {
+            sslErrorHandler.proceed();
+          }
+        }}
+        onError={(syntheticEvent) => {
+          const { nativeEvent } = syntheticEvent;
+          console.warn('WebView error: ', nativeEvent);
+        }}
       />
     </SafeAreaView>
   );
